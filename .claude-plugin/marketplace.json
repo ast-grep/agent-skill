@@ -1,13 +1,17 @@
 {
   "name": "claude-skills-marketplace",
-  "owner": "dylan",
+  "owner": {
+    "name": "dylan"
+  },
   "plugins": [
     {
       "name": "ast-grep",
       "description": "Structural code search using Abstract Syntax Tree (AST) patterns. Search codebases based on code structure rather than text matching.",
       "version": "1.0.0",
       "source": "./plugins/ast-grep",
-      "author": "dylan",
+      "author": {
+        "name": "dylan"
+      },
       "license": "MIT",
       "keywords": ["ast", "code-search", "structural-search", "ast-grep", "refactoring"]
     }

@@ -1,0 +1,22 @@
+[
+  {
+    "session_id": "45f6aa1a-74dc-43f2-bf83-e20498f8bc5b",
+    "transcript_path": "/Users/dylan/.claude/projects/-Users-dylan-projects-others-claude-ast-skill/45f6aa1a-74dc-43f2-bf83-e20498f8bc5b.jsonl",
+    "cwd": "/Users/dylan/projects/others/claude-ast-skill",
+    "permission_mode": "dontAsk",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false,
+    "agent_id": "2dd8df13",
+    "agent_transcript_path": "/Users/dylan/.claude/projects/-Users-dylan-projects-others-claude-ast-skill/agent-2dd8df13.jsonl"
+  },
+  {
+    "session_id": "45f6aa1a-74dc-43f2-bf83-e20498f8bc5b",
+    "transcript_path": "/Users/dylan/.claude/projects/-Users-dylan-projects-others-claude-ast-skill/45f6aa1a-74dc-43f2-bf83-e20498f8bc5b.jsonl",
+    "cwd": "/Users/dylan/projects/others/claude-ast-skill",
+    "permission_mode": "dontAsk",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false,
+    "agent_id": "2491c494",
+    "agent_transcript_path": "/Users/dylan/.claude/projects/-Users-dylan-projects-others-claude-ast-skill/agent-2491c494.jsonl"
+  }
+]

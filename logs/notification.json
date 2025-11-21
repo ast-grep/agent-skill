@@ -6,5 +6,13 @@
     "hook_event_name": "Notification",
     "message": "Claude needs your permission to use Bash",
     "notification_type": "permission_prompt"
+  },
+  {
+    "session_id": "4eba8c92-2631-4f71-a80d-cd55187bc7a5",
+    "transcript_path": "/Users/dylan/.claude/projects/-Users-dylan-projects-others-claude-ast-skill/4eba8c92-2631-4f71-a80d-cd55187bc7a5.jsonl",
+    "cwd": "/Users/dylan/projects/others/claude-ast-skill",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Bash",
+    "notification_type": "permission_prompt"
   }
 ]
