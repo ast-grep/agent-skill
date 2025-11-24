@@ -1,12 +1,10 @@
-# ast-grep Skill for Claude Code
+# ast-grep Plugin Marketplace for Claude Code
 
-A Claude Code skill that enables powerful structural code search using Abstract Syntax Tree (AST) patterns. Search your codebase based on code structure rather than just text matching.
+A Claude Code plugin marketplace containing the ast-grep skill for powerful structural code search using Abstract Syntax Tree (AST) patterns. Search your codebase based on code structure rather than just text matching.
 
 ## What is This?
 
-Agent Skills are modular capabilities that extend Claude’s functionality. Each Skill packages instructions, metadata, and optional resources (scripts, templates) that Claude uses automatically when relevant.
-
-ast-grep skill teaches Claude how to write and use ast-grep rules to perform advanced code searches. Unlike traditional text-based search (grep, ripgrep), ast-grep understands the structure of your code, allowing you to find patterns like:
+This is a **Claude Code plugin marketplace** that provides the **ast-grep plugin**. The plugin includes a skill that teaches Claude how to write and use ast-grep rules to perform advanced code searches. Unlike traditional text-based search (grep, ripgrep), ast-grep understands the structure of your code, allowing you to find patterns like:
 
 - "Find all async functions that don't have error handling"
 - "Locate all React components that use a specific hook"
@@ -38,18 +36,42 @@ ast-grep --version
 
 ## Installation
 
-1. Clone or download this repository to your Claude Code skills directory:
+### Option 1: Install via Marketplace (Recommended)
+
+1. **Add the marketplace** to your Claude Code (replace `<owner>/<repo>` with the actual GitHub repository):
 
 ```bash
-# If you have a skills directory configured
-cp -r ast-grep ~/.claude/skills/
-
-# Or place it wherever your Claude Code skills are located
+/plugin marketplace add <owner>/<repo>
 ```
 
-2. The skill should be automatically detected by Claude Code. You can verify by checking available skills in Claude Code.
+2. **Install the ast-grep plugin**:
 
-3. You will need to ask Claude to use this skill explicitly in your queries, like "Use ast-grep to find...". Claude code, as of Nov 2025, cannot pick up ast-grep for proper use cases automatically.
+```bash
+/plugin install ast-grep
+```
+
+3. **Restart Claude Code** to activate the plugin
+
+4. **Verify installation**: Use `/help` to see if ast-grep skill is available
+
+### Option 2: Install Locally for Development
+
+If you're developing or testing locally:
+
+```bash
+# Clone the repository
+git clone <repository-url> /path/to/local-marketplace
+
+# Add as local marketplace
+/plugin marketplace add /path/to/local-marketplace
+
+# Install the plugin
+/plugin install ast-grep
+```
+
+### Usage Notes
+
+You will need to ask Claude to use this skill explicitly in your queries, like "Use ast-grep to find...". Claude Code, as of Nov 2025, cannot automatically detect when to use ast-grep for all appropriate use cases.
 
 ## How to Use
 
@@ -137,11 +159,32 @@ If a search isn't working as expected, ask Claude to:
 - Inspect the AST structure of your code
 - Test the rule against example code
 
-## Files in This Skill
+## Repository Structure
 
-- `SKILL.md` - Main skill instructions for Claude
-- `references/rule_reference.md` - Comprehensive ast-grep rule documentation
-- `README.md` - This file
+This is a Claude Code plugin marketplace repository with the following structure:
+
+```
+claude-skill/
+├── .claude-plugin/
+│   └── marketplace.json           # Marketplace manifest
+├── ast-grep/                       # ast-grep plugin
+│   ├── .claude-plugin/
+│   │   └── plugin.json            # Plugin manifest
+│   └── skills/
+│       └── ast-grep/
+│           ├── SKILL.md           # Skill instructions for Claude
+│           └── references/
+│               └── rule_reference.md  # ast-grep rule documentation
+├── ast-grep.zip                    # Archived version
+└── README.md                       # This file
+```
+
+### Key Files
+
+- **`.claude-plugin/marketplace.json`**: Marketplace manifest defining available plugins
+- **`ast-grep/.claude-plugin/plugin.json`**: Plugin manifest for the ast-grep plugin
+- **`ast-grep/skills/ast-grep/SKILL.md`**: Main skill instructions that Claude uses
+- **`ast-grep/skills/ast-grep/references/`**: Supporting documentation and reference materials
 
 ## Tips for Best Results
 

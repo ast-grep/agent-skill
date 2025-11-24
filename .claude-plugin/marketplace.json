@@ -1,0 +1,26 @@
+{
+  "name": "claude-skill-marketplace",
+  "owner": {
+    "name": "Herrington Darkholme"
+  },
+  "metadata": {
+    "description": "A marketplace for Claude Code skills including ast-grep structural code search",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "ast-grep",
+      "source": "./ast-grep",
+      "description": "Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search.",
+      "version": "1.0.0",
+      "keywords": [
+        "ast-grep",
+        "code-search",
+        "ast",
+        "structural-search",
+        "pattern-matching",
+        "refactoring"
+      ]
+    }
+  ]
+}
