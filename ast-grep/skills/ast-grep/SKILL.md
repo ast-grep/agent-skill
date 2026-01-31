@@ -9,6 +9,13 @@ description: Guide for writing ast-grep rules to perform structural code search 
 
 This skill helps translate natural language queries into ast-grep rules for structural code search. ast-grep uses Abstract Syntax Tree (AST) patterns to match code based on its structure rather than just text, enabling powerful and precise code search across large codebases.
 
+## Environment Information
+
+**ast-grep version:**
+```
+!`ast-grep --version 2>/dev/null || echo "ast-grep is not installed. Please install it first: https://ast-grep.github.io/guide/quick-start.html"`
+```
+
 ## When to Use This Skill
 
 Use this skill when users:
@@ -91,7 +98,7 @@ ast-grep scan --rule test_rule.yml test_example.js
 **Debugging if no matches:**
 1. Simplify the rule (remove sub-rules)
 2. Add `stopBy: end` to relational rules if not present
-3. Use `--debug-query` to understand the AST structure (see below)
+3. Use `--debug-query` to understand the AST structure
 4. Check if `kind` values are correct for the language
 
 ### Step 5: Search the Codebase
@@ -116,105 +123,22 @@ rule:
   pattern: \$PATTERN" /path/to/project
 ```
 
-## ast-grep CLI Commands
+## ast-grep CLI Reference
 
-### Inspect Code Structure (--debug-query)
-
-Dump the AST structure to understand how code is parsed:
-
-```bash
-ast-grep run --pattern 'async function example() { await fetch(); }' \
-  --lang javascript \
-  --debug-query=cst
+### Main Command Help
+```
+!`ast-grep --help 2>/dev/null || echo "ast-grep is not installed"`
 ```
 
-**Available formats:**
-- `cst`: Concrete Syntax Tree (shows all nodes including punctuation)
-- `ast`: Abstract Syntax Tree (shows only named nodes)
-- `pattern`: Shows how ast-grep interprets your pattern
-
-**Use this to:**
-- Find the correct `kind` values for nodes
-- Understand the structure of code you want to match
-- Debug why patterns aren't matching
-
-**Example:**
-```bash
-# See the structure of your target code
-ast-grep run --pattern 'class User { constructor() {} }' \
-  --lang javascript \
-  --debug-query=cst
-
-# See how ast-grep interprets your pattern
-ast-grep run --pattern 'class $NAME { $$$BODY }' \
-  --lang javascript \
-  --debug-query=pattern
+### `ast-grep run` - Pattern Search
+```
+!`ast-grep run --help 2>/dev/null || echo "Run 'ast-grep run --help' for options"`
 ```
 
-### Test Rules (scan with --stdin)
-
-Test a rule against code snippet without creating files:
-
-```bash
-echo "const x = await fetch();" | ast-grep scan --inline-rules "id: test
-language: javascript
-rule:
-  pattern: await \$EXPR" --stdin
+### `ast-grep scan` - Rule-based Search
 ```
-
-**Add --json for structured output:**
-```bash
-echo "const x = await fetch();" | ast-grep scan --inline-rules "..." --stdin --json
+!`ast-grep scan --help 2>/dev/null || echo "Run 'ast-grep scan --help' for options"`
 ```
-
-### Search with Patterns (run)
-
-Simple pattern-based search for single AST node matches:
-
-```bash
-# Basic pattern search
-ast-grep run --pattern 'console.log($ARG)' --lang javascript .
-
-# Search specific files
-ast-grep run --pattern 'class $NAME' --lang python /path/to/project
-
-# JSON output for programmatic use
-ast-grep run --pattern 'function $NAME($$$)' --lang javascript --json .
-```
-
-**When to use:**
-- Simple, single-node matches
-- Quick searches without complex logic
-- When you don't need relational rules (inside/has)
-
-### Search with Rules (scan)
-
-YAML rule-based search for complex structural queries:
-
-```bash
-# With rule file
-ast-grep scan --rule my_rule.yml /path/to/project
-
-# With inline rules
-ast-grep scan --inline-rules "id: find-async
-language: javascript
-rule:
-  kind: function_declaration
-  has:
-    pattern: await \$EXPR
-    stopBy: end" /path/to/project
-
-# JSON output
-ast-grep scan --rule my_rule.yml --json /path/to/project
-```
-
-**When to use:**
-- Complex structural searches
-- Relational rules (inside, has, precedes, follows)
-- Composite logic (all, any, not)
-- When you need the power of full YAML rules
-
-**Tip:** For relational rules (inside/has), always add `stopBy: end` to ensure complete traversal.
 
 ## Tips for Writing Effective Rules
 
@@ -252,20 +176,16 @@ When rules don't match:
 3. Verify the node `kind` matches what you expect
 4. Ensure relational rules are searching in the right direction
 
+**Debug command example:**
+```bash
+ast-grep run --pattern 'your code here' --lang javascript --debug-query=cst
+```
+
 ### Escaping in Inline Rules
 
 When using `--inline-rules`, escape metavariables in shell commands:
 - Use `\$VAR` instead of `$VAR` (shell interprets `$` as variable)
 - Or use single quotes: `'$VAR'` works in most shells
-
-**Example:**
-```bash
-# Correct: escaped $
-ast-grep scan --inline-rules "rule: {pattern: 'console.log(\$ARG)'}" .
-
-# Or use single quotes
-ast-grep scan --inline-rules 'rule: {pattern: "console.log($ARG)"}' .
-```
 
 ## Common Use Cases
 
