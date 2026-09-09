@@ -152,18 +152,13 @@ ast-grep run --pattern 'class $NAME { $$$BODY }' \
 
 ### Test Rules (scan with --stdin)
 
-Test a rule against code snippet without creating files:
+Test a rule against a snippet without creating files. Append `--json` to the command for structured output:
 
 ```bash
 echo "const x = await fetch();" | ast-grep scan --inline-rules "id: test
 language: javascript
 rule:
   pattern: await \$EXPR" --stdin
-```
-
-**Add --json for structured output:**
-```bash
-echo "const x = await fetch();" | ast-grep scan --inline-rules "..." --stdin --json
 ```
 
 ### Search with Patterns or Kinds (run)
@@ -188,7 +183,7 @@ ast-grep run --pattern 'function $NAME($$$)' --lang javascript --json .
 
 ### Reading `--json` Output
 
-`--json` prints a bare JSON **array** of matches (no `matches` wrapper). For pattern `foo($ARG, $$$REST)`:
+`--json` prints a bare JSON **array** of matches (no `matches` wrapper). `--json=<style>` also controls formatting (`pretty` default, `stream`, `compact`). For pattern `foo($ARG, $$$REST)`:
 
 ```json
 [{
@@ -197,14 +192,14 @@ ast-grep run --pattern 'function $NAME($$$)' --lang javascript --json .
   "range": { "start": { "line": 41, "column": 10 }, "end": { "line": 41, "column": 27 } },
   "metaVariables": {
     "single": { "ARG": { "text": "\"value\"" } },
-    "multi": { "REST": [ { "text": "1" }, { "text": "2" } ] }
+    "multi": { "REST": [ { "text": "1" }, { "text": "," }, { "text": "2" } ] }
   }
 }]
 ```
 
-`scan --json` uses the same schema.
+`range.start.line` is 0-based. `$ARG` lands in `single`; `$$$REST` in `multi` (commas included, empty if none captured). Matches also carry `lines`, `language`, `charCount`, and `range.byteOffset`.
 
-(Each match also includes `lines` and `language`.) `range.start.line` is 0-based. Named metavariables (`$ARG`) land in `single`, list metavariables (`$$$REST`) in `multi` as a list (empty if nothing captured). Extract with jq:
+`scan --json` returns the same fields plus rule-specific ones (`ruleId`, `severity`, `labels`, ...). Extract with jq:
 
 ```bash
 ast-grep run --pattern 'foo($ARG)' --lang javascript --json . \
@@ -275,17 +270,10 @@ Begin with the simplest rule that could work:
 
 ### Escaping in Inline Rules
 
-When using `--inline-rules`, escape metavariables in shell commands:
-- Use `\$VAR` instead of `$VAR` (shell interprets `$` as variable)
-- Or use single quotes: `'$VAR'` works in most shells
+`--inline-rules` needs a full rule config (`id` and `language` included). In double quotes escape metavariables as `\$VAR`; single quotes need no escaping. Separate multiple rules with `---` (`--inline-rules` conflicts with `--rule`).
 
-**Example:**
 ```bash
-# Correct: escaped $
-ast-grep scan --inline-rules "rule: {pattern: 'console.log(\$ARG)'}" .
-
-# Or use single quotes
-ast-grep scan --inline-rules 'rule: {pattern: "console.log($ARG)"}' .
+ast-grep scan --inline-rules "{id: find-console, language: javascript, rule: {pattern: 'console.log(\$ARG)'}}" .
 ```
 
 ## Common Use Cases
