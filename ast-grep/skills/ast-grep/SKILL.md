@@ -1,13 +1,13 @@
 ---
 name: ast-grep
-description: Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.
+description: Structural code search with ast-grep. Use for AST pattern search (`run --pattern`), YAML rules (`scan`) for relational/composite queries, and parsing JSON matches with captured metavariables.
 ---
 
 # ast-grep Code Search
 
 ## Overview
 
-This skill helps translate natural language queries into ast-grep rules for structural code search. ast-grep uses Abstract Syntax Tree (AST) patterns to match code based on its structure rather than just text, enabling powerful and precise code search across large codebases.
+This skill translates natural language queries into ast-grep patterns and rules. ast-grep matches code by its Abstract Syntax Tree (AST) structure rather than text, enabling precise search across large codebases.
 
 ## When to Use This Skill
 
