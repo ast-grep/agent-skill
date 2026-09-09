@@ -187,6 +187,31 @@ ast-grep run --pattern 'function $NAME($$$)' --lang javascript --json .
 - Quick searches without complex logic
 - When you don't need relational rules (inside/has)
 
+### Reading `--json` Output
+
+`--json` prints a bare JSON **array** of matches (no `matches` wrapper). For pattern `foo($ARG, $$$REST)`:
+
+```json
+[{
+  "text": "foo(\"value\", 1, 2)",
+  "file": "src/app.js",
+  "range": { "start": { "line": 41, "column": 10 }, "end": { "line": 41, "column": 27 } },
+  "metaVariables": {
+    "single": { "ARG": { "text": "\"value\"" } },
+    "multi": { "REST": [ { "text": "1" }, { "text": "2" } ] }
+  }
+}]
+```
+
+`scan --json` uses the same schema.
+
+(Each match also includes `lines` and `language`.) `range.start.line` is 0-based. Named metavariables (`$ARG`) land in `single`, list metavariables (`$$$REST`) in `multi` as a list (empty if nothing captured). Extract with jq:
+
+```bash
+ast-grep run --pattern 'foo($ARG)' --lang javascript --json . \
+  | jq -r '.[] | "\(.file):\(.range.start.line + 1): \(.metaVariables.single.ARG.text)"'
+```
+
 ### Search with Rules (scan)
 
 YAML rule-based search for complex structural queries:
