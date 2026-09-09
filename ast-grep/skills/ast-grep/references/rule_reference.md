@@ -34,7 +34,7 @@ For rules using metavariables that depend on prior matching, explicit `all` comp
 | `kind` | String | Atomic | Matches AST node by its kind name. | `kind: call_expression` |
 | `regex` | String | Atomic | Matches node's text by Rust regex. | `regex: ^[a-z]+$` |
 | `nthChild` | number, string, Object | Atomic | Matches nodes by their index within parent's children. | `nthChild: 1` |
-| `range` | RangeObject | Atomic | Matches node by character-based start/end positions. | `range: { start: { line: 0, column: 0 }, end: { line: 0, column: 10 } }` |
+| `range` | RangeObject | Atomic | Matches node by 0-based line/column start/end. Must be combined with a positive rule (e.g. `kind`). | `range: { start: { line: 0, column: 0 }, end: { line: 0, column: 10 } }` |
 | `inside` | Object | Relational | Target node must be inside node matching sub-rule. | `inside: { pattern: class $C { $$$ }, stopBy: end }` |
 | `has` | Object | Relational | Target node must have descendant matching sub-rule. | `has: { pattern: await $EXPR, stopBy: end }` |
 | `precedes` | Object | Relational | Target node must appear before node matching sub-rule. | `precedes: { pattern: return $VAL }` |
@@ -86,7 +86,7 @@ kind: call_expression
 
 ### regex: Text-Based Node Matching
 
-The `regex` rule matches the entire text content of an AST node using a Rust regular expression. It's not a "positive" rule, meaning it matches any node whose text satisfies the regex, regardless of its structural kind.
+The `regex` rule matches an AST node's entire text content against a Rust regular expression. It is not a *positive* rule: it cannot determine which node kinds to match, so combine it with `kind` or `pattern`.
 
 ### nthChild: Positional Node Matching
 
@@ -101,7 +101,7 @@ The `nthChild` rule finds nodes by their 1-based index within their parent's chi
 
 ### range: Position-Based Node Matching
 
-The `range` rule matches an AST node based on its character-based start and end positions. A `RangeObject` defines `start` and `end` fields, each with 0-based `line` and `column`. `start` is inclusive, `end` is exclusive.
+The `range` rule filters AST nodes by 0-based `line`/`column` start and end positions (`start` is inclusive, `end` is exclusive). It cannot determine candidate node kinds on its own, so combine it with a positive rule such as `kind` or `pattern`.
 
 ## Relational Rules
 
@@ -290,7 +290,7 @@ rule:
 
 ## Troubleshooting Tips
 
-1. **Rule doesn't match**: Use `dump_syntax_tree` to see the actual AST structure
+1. **Rule doesn't match**: Dump the parsed AST with `ast-grep run --pattern <pattern> --lang <lang> --debug-query=cst`
 2. **Relational rule issues**: Ensure `stopBy: end` is set for deep searches
 3. **Wrong node kind**: Check the language's Tree-sitter grammar for correct kind names
 4. **Metavariable not working**: Ensure it's the only content in its AST node

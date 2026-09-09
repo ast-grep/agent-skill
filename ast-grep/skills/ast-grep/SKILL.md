@@ -102,7 +102,7 @@ ast-grep scan --rule test_rule.yml test_example.js
 **Debugging if no matches:**
 1. Simplify the rule (remove sub-rules)
 2. Add `stopBy: end` to relational rules if not present
-3. Use `--debug-query` to understand the AST structure (see below)
+3. Use `run --debug-query=cst` to understand the AST structure (see below)
 4. Check if `kind` values are correct for the language
 5. For zero matches from `run --pattern` (not rules), see the "Zero Matches?" tip below
 
@@ -136,7 +136,7 @@ ast-grep run --pattern 'async function example() { await fetch(); }' \
 **Use this to:**
 - Find the correct `kind` values for nodes
 - Understand the structure of code you want to match
-- Debug why patterns aren't matching
+- Debug why patterns/rules aren't matching (metavariables, node `kind`, relational direction)
 
 **Example:**
 ```bash
@@ -243,6 +243,13 @@ ast-grep scan --rule my_rule.yml --json /path/to/project
 
 ## Tips and Troubleshooting
 
+### Zero Matches? Patterns Match Whole AST Nodes
+
+`run --pattern` matches complete AST nodes, not text substrings, so zero matches can mean "code absent" or "pattern has the wrong node shape":
+
+- Qualified paths are whole nodes: `env::var($ENV)` does NOT match `std::env::var("X")`. Try both bare and fully-qualified forms, or use `$$$` to absorb extra intermediate nodes.
+- To confirm, test the pattern on a known snippet and inspect it with `run --debug-query=pattern`; for rules, use the Step 4 checklist.
+
 ### Always Use stopBy: end
 
 For relational rules, always use `stopBy: end` unless there's a specific reason not to:
@@ -268,21 +275,6 @@ Begin with the simplest rule that could work:
 - **Pattern**: For simple, direct code matching (e.g., `console.log($ARG)`)
 - **Kind + Relational**: For complex structures (e.g., "function containing await")
 - **Composite**: For logical combinations (e.g., "function with await but not in try-catch")
-
-### Debug with AST Inspection
-
-When rules don't match:
-1. Use `--debug-query=cst` to see the actual AST structure
-2. Check if metavariables are being detected correctly
-3. Verify the node `kind` matches what you expect
-4. Ensure relational rules are searching in the right direction
-
-### Zero Matches? Patterns Match Whole AST Nodes
-
-`run --pattern` matches complete AST nodes, not text substrings, so zero matches can mean "code absent" or "pattern has the wrong node shape":
-
-- Qualified paths are whole nodes: `env::var($ENV)` does NOT match `std::env::var("X")`. Try both bare and fully-qualified forms, or use `$$$` to absorb extra intermediate nodes.
-- To tell them apart: test the pattern on a snippet known to contain the code, and inspect how ast-grep parsed it with `--debug-query=pattern` (works for `run`, not just `scan`/rules). For zero matches from rules instead, follow the Step 4 debugging checklist.
 
 ### Escaping in Inline Rules
 
