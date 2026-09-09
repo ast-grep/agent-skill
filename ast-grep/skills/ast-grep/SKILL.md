@@ -290,6 +290,16 @@ ast-grep scan --inline-rules 'rule: {pattern: "console.log($ARG)"}' .
 
 ## Common Use Cases
 
+### Find Calls to a Specific Function
+
+Simple searches need only a pattern — find all calls to `fetchData`:
+
+```bash
+ast-grep run --pattern 'fetchData($$$ARGS)' --lang javascript /path/to/project
+```
+
+The rule-based cases below cover queries a single pattern can't express.
+
 ### Find Functions with Specific Content
 
 Find async functions that use await:
