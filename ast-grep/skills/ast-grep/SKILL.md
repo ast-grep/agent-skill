@@ -14,8 +14,7 @@ This skill translates natural language queries into ast-grep patterns and rules.
 Use this skill when users:
 - Need to search for code patterns using structural matching (e.g., "find all async functions that don't have error handling")
 - Want to locate specific language constructs (e.g., "find all function calls with specific parameters")
-- Request searches that require understanding code structure rather than just text
-- Ask to search for code with particular AST characteristics
+- Request searches that require understanding code structure or particular AST characteristics rather than just text
 - Need to perform complex code queries that traditional text search cannot handle
 
 ## General Workflow
@@ -68,7 +67,7 @@ Escalate to `scan` rules when you need relational (`inside`/`has`), composite (`
 Translate the pattern into an ast-grep rule. Start simple and add complexity as needed.
 
 **Key principles:**
-- Always use `stopBy: end` for relational rules (`inside`, `has`) to ensure search goes to the end of the direction
+- Always use `stopBy: end` for relational rules (`inside`, `has`) — see "Always Use stopBy: end" in Tips and Troubleshooting
 - Use `pattern` for simple structures
 - Use `kind` with `has`/`inside` for complex structures
 - Break complex queries into smaller sub-rules using `all`, `any`, or `not`
@@ -238,8 +237,6 @@ ast-grep scan --rule my_rule.yml --json /path/to/project
 - Relational rules (inside, has, precedes, follows)
 - Composite logic (all, any, not)
 - When you need the power of full YAML rules
-
-**Tip:** For relational rules (inside/has), always add `stopBy: end` to ensure complete traversal.
 
 ## Tips and Troubleshooting
 
