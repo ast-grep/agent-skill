@@ -20,7 +20,7 @@ Use this skill when users:
 
 ## General Workflow
 
-Follow this process to help users write effective ast-grep rules:
+Follow this process to help users find code with ast-grep. Start with simple pattern searches and escalate to YAML rules only when the query needs them:
 
 ### Step 1: Understand the Query
 
@@ -32,7 +32,7 @@ Clearly understand what the user wants to find. Ask clarifying questions if need
 
 ### Step 2: Create Example Code
 
-Write a simple code snippet that represents what the user wants to match. Save this to a temporary file for testing.
+Write a snippet representing what the user wants to match.
 
 **Example:**
 If searching for "async functions that use await", create a test file:
@@ -45,7 +45,25 @@ async function example() {
 }
 ```
 
-### Step 3: Write the ast-grep Rule
+### Step 3: Try a Pattern Search
+
+For simple, single-node matches, use `run --pattern`. ast-grep infers the language from the file extension; `--lang` is only required for `--stdin` input:
+
+```bash
+ast-grep run --pattern 'console.log($ARG)' --lang javascript /path/to/project
+```
+
+- A snippet isn't required for a pattern search, but a quick one helps verify the pattern's node shape
+- If the pattern returns zero matches, see the "Zero Matches?" tip in Tips and Troubleshooting — the node shape may differ from the pattern (e.g. bare vs fully-qualified paths)
+- For programmatic use, add `--json`; see "Reading --json Output" for the schema
+- If you know the target node `kind` but not the code shape, use `run --kind <KIND>` (also accepts ESQuery selectors like `call_expression:has(identifier)`)
+- If the query needs relational or composite logic, continue to Step 4
+
+### Step 4: Escalate to Rules for Complex Queries
+
+Escalate to `scan` rules when you need relational (`inside`/`has`), composite (`all`/`any`/`not`), or negative logic.
+
+**Write the ast-grep Rule**
 
 Translate the pattern into an ast-grep rule. Start simple and add complexity as needed.
 
@@ -68,20 +86,13 @@ rule:
 
 See `references/rule_reference.md` for comprehensive rule documentation.
 
-### Step 4: Test the Rule
+**Test the Rule**
 
-Use ast-grep CLI to verify the rule matches the example code. There are two main approaches:
+Use ast-grep CLI to verify the rule matches the snippet from Step 2. There are two main approaches:
 
 **Option A: Test with inline rules (for quick iterations)**
-```bash
-echo "async function test() { await fetch(); }" | ast-grep scan --inline-rules "id: test
-language: javascript
-rule:
-  kind: function_declaration
-  has:
-    pattern: await \$EXPR
-    stopBy: end" --stdin
-```
+
+Pipe a snippet through `scan --stdin` — see "Test Rules (scan with --stdin)" in ast-grep CLI Commands below.
 
 **Option B: Test with rule files (recommended for complex rules)**
 ```bash
@@ -95,27 +106,15 @@ ast-grep scan --rule test_rule.yml test_example.js
 4. Check if `kind` values are correct for the language
 5. For zero matches from `run --pattern` (not rules), see the "Zero Matches?" tip below
 
-### Step 5: Search the Codebase
+### Step 5: Search the Codebase with the Rule
 
 Once the rule matches the example code correctly, search the actual codebase:
 
-**For simple pattern searches:**
-```bash
-ast-grep run --pattern 'console.log($ARG)' --lang javascript /path/to/project
-```
-
-**For complex rule-based searches:**
 ```bash
 ast-grep scan --rule my_rule.yml /path/to/project
 ```
 
-**For inline rules (without creating files):**
-```bash
-ast-grep scan --inline-rules "id: my-rule
-language: javascript
-rule:
-  pattern: \$PATTERN" /path/to/project
-```
+For inline rules without creating a file, see "Search with Rules (scan)" under ast-grep CLI Commands.
 
 ## ast-grep CLI Commands
 
@@ -168,25 +167,25 @@ rule:
 echo "const x = await fetch();" | ast-grep scan --inline-rules "..." --stdin --json
 ```
 
-### Search with Patterns (run)
+### Search with Patterns or Kinds (run)
 
-Simple pattern-based search for single AST node matches:
+Simple search for a single AST node, by `--pattern` or by `--kind`:
 
 ```bash
-# Basic pattern search
+# Pattern search
 ast-grep run --pattern 'console.log($ARG)' --lang javascript .
 
 # Search specific files
 ast-grep run --pattern 'class $NAME' --lang python /path/to/project
 
+# Match by node kind (ESQuery selectors supported)
+ast-grep run --kind call_expression --lang javascript .
+
 # JSON output for programmatic use
 ast-grep run --pattern 'function $NAME($$$)' --lang javascript --json .
 ```
 
-**When to use:**
-- Simple, single-node matches
-- Quick searches without complex logic
-- When you don't need relational rules (inside/has)
+**When to use:** a single-node match where a plain pattern or kind suffices — no relational rules (`inside`/`has`) or composite logic.
 
 ### Reading `--json` Output
 
@@ -242,7 +241,7 @@ ast-grep scan --rule my_rule.yml --json /path/to/project
 
 **Tip:** For relational rules (inside/has), always add `stopBy: end` to ensure complete traversal.
 
-## Tips for Writing Effective Rules
+## Tips and Troubleshooting
 
 ### Always Use stopBy: end
 
