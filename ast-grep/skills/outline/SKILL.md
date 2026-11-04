@@ -5,8 +5,8 @@ description: Use when exploring or modifying a codebase and you need a cheap str
 
 # Use ast-grep outline
 
-`ast-grep outline` prints a compact structural map of source code with line
-numbers: top-level **items** (imports, functions, classes, structs,
+`ast-grep outline` prints a structural map of source code with line
+numbers: top-level declarations (imports, functions, classes, structs,
 interfaces, modules, enums) and their direct **members** (fields, methods,
 constructors, enum variants). It is a local, syntax-only view — cheap enough
 to run before any full file read.
@@ -58,12 +58,15 @@ ast-grep outline $(git diff --name-only HEAD) --items exports
 
 ## Argument Guide
 
-- `--items <KIND>` selects top-level items: `structure` for local declarations
-  (file default), `exports` for public API (directory default), `imports` for
-  dependencies, `all` when import/export edges matter together.
+- `--items <KIND>` selects top-level items: `structure` for local declarations,
+  `exports` for public API, `imports` for dependencies, `all` when
+  import/export edges matter together. The default, `auto`, picks `structure`
+  for a file and `exports` for a directory. No other value is accepted; to
+  keep only functions, classes, or another symbol kind, use `--type`.
 - `--view <VIEW>` controls detail, from least to most: `names` for directory
   scans, `signatures` for one line per item, `digest` for signatures plus
-  member names, `expanded` for one line per member with its line number.
+  member names, `expanded` for one line per member with its line number. The
+  default, `auto`, picks one from the input path. No other value is accepted.
 - `--match <REGEX>` filters top-level items by name or signature. Rust regex,
   case-sensitive; it never matches members.
 - `--type <TYPE[,TYPE...]>` keeps only some top-level symbol types, such as
