@@ -354,3 +354,12 @@ Contains detailed documentation for ast-grep rule syntax:
 - `rule_reference.md`: Comprehensive ast-grep rule documentation covering atomic rules, relational rules, composite rules, and metavariables
 
 Load these references when detailed rule syntax information is needed.
+
+### Online documentation
+When a rule still fails after `--debug-query` and the rule reference, read
+the official docs:
+- `https://ast-grep.github.io/llms.txt` indexes every docs page; fetch the
+  one page you need (each is linked as a `.md` file, such as
+  `https://ast-grep.github.io/guide/rule-config/relational-rule.md`).
+- `https://ast-grep.github.io/llms-full.txt` holds all the docs in one
+  file of about 850 KB. Download it and search it; never read it whole.
